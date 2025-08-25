@@ -174,7 +174,7 @@ BASE_URL=https://api.openai.com/v1
 MODEL=gpt-3.5-turbo
 
 # 服务器配置
-PORT=8080
+PORT=8092
 GIN_MODE=release
 
 # 日志配置
@@ -270,7 +270,7 @@ start_service() {
         print_success "服务启动成功！"
         
         # 测试健康检查
-        if curl -s http://localhost:8080/health > /dev/null; then
+        if curl -s http://localhost:8092/health > /dev/null; then
             print_success "健康检查通过"
         else
             print_warning "健康检查失败，请检查日志"
@@ -300,8 +300,8 @@ show_installation_info() {
     echo "  - 查看日志: sudo journalctl -u ${SERVICE_NAME} -f"
     echo
     echo "🌐 访问地址:"
-    echo "  - 本地访问: http://localhost:8080"
-    echo "  - 健康检查: http://localhost:8080/health"
+    echo "  - 本地访问: http://localhost:8092"
+    echo "  - 健康检查: http://localhost:8092/health"
     echo
     if grep -q "your_api_key_here" "${CONFIG_DIR}/env"; then
         print_warning "⚠️  请配置您的 API_KEY："

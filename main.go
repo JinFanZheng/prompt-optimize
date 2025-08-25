@@ -57,7 +57,7 @@ func loadConfig() *Config {
 	}
 
 	if config.Port == "" {
-		config.Port = "8080"
+		config.Port = "8092"
 	}
 
 	return config

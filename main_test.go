@@ -44,7 +44,7 @@ func TestLoadConfigDefaults(t *testing.T) {
 		t.Errorf("Expected default MODEL to be 'gpt-3.5-turbo', got %s", config.Model)
 	}
 
-	if config.Port != "8080" {
-		t.Errorf("Expected default PORT to be '8080', got %s", config.Port)
+	if config.Port != "8092" {
+		t.Errorf("Expected default PORT to be '8092', got %s", config.Port)
 	}
 }

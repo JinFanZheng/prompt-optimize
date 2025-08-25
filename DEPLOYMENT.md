@@ -94,7 +94,7 @@ sudo systemctl start prompt-optimize
 sudo systemctl reload caddy
 
 # 7. 验证部署
-curl http://localhost:8080/health
+curl http://localhost:8092/health
 curl https://your-domain.com/health
 ```
 

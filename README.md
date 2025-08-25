@@ -58,7 +58,7 @@
 
 5. **访问应用**
    
-   打开浏览器访问: http://localhost:8080
+   打开浏览器访问: http://localhost:8092
 
 ### 生产部署
 
@@ -142,7 +142,7 @@ sudo nano /etc/prompt-optimize/env
 API_KEY=your_api_key_here
 BASE_URL=https://api.openai.com/v1
 MODEL=gpt-3.5-turbo
-PORT=8080
+PORT=8092
 GIN_MODE=release
 ```
 
@@ -205,7 +205,7 @@ curl -fsSL https://raw.githubusercontent.com/JinFanZheng/prompt-optimize/main/se
 | `API_KEY` | OpenAI API 密钥 | **必须设置** |
 | `BASE_URL` | API 基础 URL | `https://api.openai.com/v1` |
 | `MODEL` | 使用的模型 | `gpt-3.5-turbo` |
-| `PORT` | 应用端口 | `8080` |
+| `PORT` | 应用端口 | `8092` |
 | `GIN_MODE` | Gin 运行模式 | `release` |
 
 ## 📡 API 接口
@@ -256,7 +256,7 @@ curl -fsSL https://raw.githubusercontent.com/JinFanZheng/prompt-optimize/main/se
 go test ./...
 
 # 测试 API 接口
-curl -X POST http://localhost:8080/api/optimize \
+curl -X POST http://localhost:8092/api/optimize \
   -H "Content-Type: application/json" \
   -d '{"input": "帮我优化一个写作助手的提示词"}'
 ```

@@ -6,7 +6,7 @@
 
 your-domain.com {
     # 反向代理到应用
-    reverse_proxy localhost:8080
+    reverse_proxy localhost:8092
 
     # 启用日志记录
     log {
@@ -65,7 +65,7 @@ your-domain.com {
 
 # 开发环境配置（使用 localhost）
 localhost:80, :80 {
-    reverse_proxy localhost:8080
+    reverse_proxy localhost:8092
 
     log {
         output stdout

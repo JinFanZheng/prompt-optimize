@@ -302,7 +302,7 @@ sudo systemctl status prompt-optimize --no-pager -l || true
 
 echo
 echo "🌐 测试健康检查..."
-if curl -s http://localhost:8080/health > /dev/null; then
+if curl -s http://localhost:8092/health > /dev/null; then
     echo "✅ 健康检查通过"
 else
     echo "❌ 健康检查失败"

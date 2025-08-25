@@ -58,7 +58,7 @@ BASE_URL=https://api.openai.com/v1
 MODEL=gpt-3.5-turbo
 
 # 服务器配置
-PORT=8080
+PORT=8092
 GIN_MODE=release
 
 # 日志配置

@@ -213,7 +213,7 @@ start_service() {
         print_success "服务启动成功！"
         
         # 测试健康检查
-        if curl -s http://localhost:8080/health > /dev/null; then
+        if curl -s http://localhost:8092/health > /dev/null; then
             print_success "健康检查通过"
         else
             print_warning "健康检查失败，请检查日志"
@@ -283,8 +283,8 @@ show_upgrade_info() {
     echo "  - 重启服务: sudo systemctl restart ${SERVICE_NAME}"
     echo
     echo "🌐 访问地址:"
-    echo "  - 本地访问: http://localhost:8080"
-    echo "  - 健康检查: http://localhost:8080/health"
+    echo "  - 本地访问: http://localhost:8092"
+    echo "  - 健康检查: http://localhost:8092/health"
     echo
     if [ -n "${BACKUP_PATH}" ]; then
         echo "🔄 如需回滚:"

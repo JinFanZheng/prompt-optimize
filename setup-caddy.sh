@@ -35,7 +35,7 @@ show_help() {
   [域名]              要配置的域名 (可选，如不提供将交互式询问)
 
 选项:
-  --port PORT         应用端口 (默认: 8080)
+  --port PORT         应用端口 (默认: 8092)
   --email EMAIL       Let's Encrypt 邮箱地址
   --no-ssl            不启用SSL/TLS (仅HTTP)
   --backup            备份现有配置
@@ -413,7 +413,7 @@ show_config_info() {
 # 主函数
 main() {
     local domain=""
-    local port="8080"
+    local port="8092"
     local email=""
     local no_ssl="false"
     local do_backup="false"
