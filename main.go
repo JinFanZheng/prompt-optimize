@@ -145,7 +145,7 @@ func optimizePrompt(config *Config, userInput string) (string, error) {
 				Content: prompt,
 			},
 		},
-		MaxTokens:   4000,
+		MaxTokens:   10240,
 		Temperature: 0.7,
 	}
 

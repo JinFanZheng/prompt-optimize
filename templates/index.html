@@ -6,6 +6,10 @@
     <title>{{.title}}</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body class="bg-base-100">
@@ -34,8 +38,12 @@
                         <textarea 
                             id="userInput" 
                             class="textarea textarea-bordered textarea-primary h-64 resize-none" 
-                            placeholder="例如：我想要一个帮助用户写作业的AI助手提示词，需要严谨、友善，并能提供学习指导而不是直接答案..."
+                            placeholder="例如：写个Redis的提示词，用于Claude"
                         ></textarea>
+                        <div class="flex justify-between items-center mt-2 text-xs opacity-60">
+                            <span>支持 Ctrl+Enter 快速提交</span>
+                            <span id="inputCount">0 字符</span>
+                        </div>
                     </div>
                     <div class="card-actions justify-end mt-4">
                         <button id="optimizeBtn" class="btn btn-primary btn-lg">
@@ -63,15 +71,29 @@
                                 </div>
                             </div>
                             <div id="result" class="hidden">
-                                <div class="bg-base-100 p-4 rounded-lg border">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="badge badge-success">优化完成</span>
-                                        <button id="copyBtn" class="btn btn-outline btn-sm">
-                                            <span id="copyText">复制</span>
-                                            <span id="copiedText" class="hidden">已复制</span>
-                                        </button>
+                                <div class="bg-base-100 rounded-lg border">
+                                    <div class="flex justify-between items-center p-4 border-b">
+                                        <div class="flex items-center gap-2">
+                                            <span class="badge badge-success">优化完成</span>
+                                            <span id="wordCount" class="text-xs opacity-60"></span>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button id="copyOptimizedBtn" class="btn btn-outline btn-sm">
+                                                <span id="copyOptimizedText">复制优化版</span>
+                                                <span id="copiedOptimizedText" class="hidden">已复制</span>
+                                            </button>
+                                            <button id="copyMarkdownBtn" class="btn btn-outline btn-sm">
+                                                <span id="copyMarkdownText">复制原文</span>
+                                                <span id="copiedMarkdownText" class="hidden">已复制</span>
+                                            </button>
+                                            <button id="downloadBtn" class="btn btn-outline btn-sm">
+                                                <span>下载</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <pre id="optimizedPrompt" class="whitespace-pre-wrap text-sm leading-relaxed"></pre>
+                                    <div class="p-4">
+                                        <div id="optimizedPrompt" class="prose prose-sm max-w-none"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div id="error" class="hidden">
@@ -136,7 +158,14 @@
                         </div>
                         <div class="flex items-start space-x-3">
                             <span class="badge badge-warning">💡</span>
-                            <p><strong>提示：</strong>描述越详细，优化效果越好。可以包括使用场景、目标用户、期望的回答风格等信息。</p>
+                            <div>
+                                <p><strong>提示：</strong>描述越详细，优化效果越好。</p>
+                                <div class="mt-2 text-xs space-y-1">
+                                    <p>• 包括使用场景、目标用户、回答风格</p>
+                                    <p>• 说明需要针对的AI模型（Claude/GPT/Gemini等）</p>
+                                    <p>• 描述期望的输出格式和结构</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -10,10 +10,22 @@ const placeholder = document.getElementById('placeholder');
 const result = document.getElementById('result');
 const error = document.getElementById('error');
 const optimizedPrompt = document.getElementById('optimizedPrompt');
-const copyBtn = document.getElementById('copyBtn');
-const copyText = document.getElementById('copyText');
-const copiedText = document.getElementById('copiedText');
+const copyOptimizedBtn = document.getElementById('copyOptimizedBtn');
+const copyOptimizedText = document.getElementById('copyOptimizedText');
+const copiedOptimizedText = document.getElementById('copiedOptimizedText');
+const copyMarkdownBtn = document.getElementById('copyMarkdownBtn');
+const copyMarkdownText = document.getElementById('copyMarkdownText');
+const copiedMarkdownText = document.getElementById('copiedMarkdownText');
+const downloadBtn = document.getElementById('downloadBtn');
+const wordCount = document.getElementById('wordCount');
+const inputCount = document.getElementById('inputCount');
 const errorMessage = document.getElementById('errorMessage');
+
+// 存储原始响应数据
+let currentResponse = {
+    original: '',
+    rendered: ''
+};
 
 // 事件监听器
 document.addEventListener('DOMContentLoaded', function() {
@@ -21,10 +33,17 @@ document.addEventListener('DOMContentLoaded', function() {
     optimizeBtn.addEventListener('click', handleOptimize);
     
     // 复制按钮点击事件
-    copyBtn.addEventListener('click', handleCopy);
+    copyOptimizedBtn.addEventListener('click', () => handleCopy('optimized'));
+    copyMarkdownBtn.addEventListener('click', () => handleCopy('markdown'));
+    
+    // 下载按钮点击事件
+    downloadBtn.addEventListener('click', handleDownload);
     
     // 输入框变化事件
     userInput.addEventListener('input', handleInputChange);
+    
+    // 初始化字符计数
+    handleInputChange();
     
     // 回车键支持（Ctrl+Enter提交）
     userInput.addEventListener('keydown', function(e) {
@@ -36,8 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 处理输入变化
 function handleInputChange() {
-    const inputValue = userInput.value.trim();
-    optimizeBtn.disabled = inputValue === '' || isOptimizing;
+    const inputValue = userInput.value;
+    const charCount = inputValue.length;
+    
+    inputCount.textContent = `${charCount} 字符`;
+    optimizeBtn.disabled = inputValue.trim() === '' || isOptimizing;
 }
 
 // 处理优化请求
@@ -91,9 +113,24 @@ async function handleOptimize() {
 }
 
 // 处理复制功能
-async function handleCopy() {
+async function handleCopy(type = 'optimized') {
     try {
-        const text = optimizedPrompt.textContent;
+        let text = '';
+        let copyBtn, copyText, copiedText;
+        
+        if (type === 'optimized') {
+            // 复制纯文本版本（去除markdown格式）
+            text = extractPlainText(currentResponse.original);
+            copyBtn = copyOptimizedBtn;
+            copyText = copyOptimizedText;
+            copiedText = copiedOptimizedText;
+        } else if (type === 'markdown') {
+            // 复制原始markdown文本
+            text = currentResponse.original;
+            copyBtn = copyMarkdownBtn;
+            copyText = copyMarkdownText;
+            copiedText = copiedMarkdownText;
+        }
         
         if (!text) {
             return;
@@ -117,7 +154,7 @@ async function handleCopy() {
         }
         
         // 显示复制成功状态
-        showCopySuccess();
+        showCopySuccess(copyText, copiedText);
         
     } catch (err) {
         console.error('复制失败:', err);
@@ -125,8 +162,27 @@ async function handleCopy() {
     }
 }
 
+// 处理下载功能
+function handleDownload() {
+    if (!currentResponse.original) {
+        return;
+    }
+    
+    const filename = `prompt_${new Date().toISOString().slice(0, 19).replace(/[:-]/g, '')}.md`;
+    const blob = new Blob([currentResponse.original], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 // 显示复制成功状态
-function showCopySuccess() {
+function showCopySuccess(copyText, copiedText) {
     copyText.classList.add('hidden');
     copiedText.classList.remove('hidden');
     
@@ -163,7 +219,17 @@ function hideAllResults() {
 // 显示优化结果
 function showResult(resultText) {
     hideAllResults();
-    optimizedPrompt.textContent = resultText;
+    
+    // 存储原始数据
+    currentResponse.original = resultText;
+    
+    // 渲染Markdown
+    currentResponse.rendered = renderMarkdown(resultText);
+    optimizedPrompt.innerHTML = currentResponse.rendered;
+    
+    // 更新字数统计
+    updateWordCount(resultText);
+    
     result.classList.remove('hidden');
     
     // 滚动到结果区域
@@ -191,6 +257,54 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// Markdown渲染函数
+function renderMarkdown(text) {
+    // 配置marked选项
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        sanitize: false
+    });
+    
+    // 渲染markdown
+    const html = marked.parse(text);
+    
+    // 使用DOMPurify清理HTML（防止XSS）
+    const cleanHtml = DOMPurify.sanitize(html);
+    
+    return cleanHtml;
+}
+
+// 提取纯文本（去除markdown格式）
+function extractPlainText(markdownText) {
+    // 先渲染为HTML
+    const html = marked.parse(markdownText);
+    
+    // 创建临时DOM元素来提取纯文本
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // 获取纯文本并清理空行
+    let plainText = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // 清理多余的空行和空格
+    plainText = plainText
+        .replace(/\n\s*\n\s*\n/g, '\n\n')  // 多个空行合并为两个
+        .replace(/^\s+|\s+$/gm, '')        // 去除行首尾空格
+        .trim();                           // 去除整体首尾空格
+    
+    return plainText;
+}
+
+// 更新字数统计
+function updateWordCount(text) {
+    const plainText = extractPlainText(text);
+    const charCount = plainText.length;
+    const wordCount = plainText.split(/\s+/).filter(word => word.length > 0).length;
+    
+    document.getElementById('wordCount').textContent = `${charCount} 字符, ${wordCount} 单词`;
 }
 
 // 工具函数：格式化文本

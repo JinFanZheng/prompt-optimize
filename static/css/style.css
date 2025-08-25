@@ -55,3 +55,107 @@
     word-wrap: break-word;
     white-space: pre-wrap;
 }
+
+/* Markdown 渲染样式 */
+.prose {
+    max-width: none !important;
+}
+
+.prose h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 1.5rem 0 1rem 0;
+    color: var(--fallback-pc, oklch(var(--pc)));
+}
+
+.prose h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.75rem 0;
+    color: var(--fallback-sc, oklch(var(--sc)));
+}
+
+.prose h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.prose p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+}
+
+.prose ul, .prose ol {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+}
+
+.prose li {
+    margin: 0.25rem 0;
+}
+
+.prose code {
+    background-color: var(--fallback-b2, oklch(var(--b2)));
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.prose pre {
+    background-color: var(--fallback-b2, oklch(var(--b2)));
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.prose pre code {
+    background: none;
+    padding: 0;
+}
+
+.prose blockquote {
+    border-left: 4px solid var(--fallback-bc, oklch(var(--bc)));
+    padding-left: 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.prose strong {
+    font-weight: 600;
+}
+
+.prose em {
+    font-style: italic;
+}
+
+/* 字符统计样式 */
+#inputCount {
+    transition: color 0.2s ease;
+}
+
+/* 工具栏按钮样式 */
+.btn-outline:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 结果区域动画 */
+#result {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
