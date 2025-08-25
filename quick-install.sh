@@ -48,9 +48,19 @@ download_file() {
     print_info "下载: $(basename "$dest")"
     
     if command -v curl &> /dev/null; then
-        curl -sL "$url" -o "$dest"
+        if curl -L --connect-timeout 10 --max-time 300 --retry 3 --progress-bar "$url" -o "$dest"; then
+            print_success "下载完成: $(basename "$dest")"
+        else
+            print_error "下载失败: $(basename "$dest")"
+            exit 1
+        fi
     elif command -v wget &> /dev/null; then
-        wget -q "$url" -O "$dest"
+        if wget --timeout=10 --tries=3 --progress=bar --show-progress "$url" -O "$dest"; then
+            print_success "下载完成: $(basename "$dest")"
+        else
+            print_error "下载失败: $(basename "$dest")"
+            exit 1
+        fi
     else
         print_error "需要curl或wget"
         exit 1
