@@ -12,6 +12,10 @@ APP_NAME="prompt-optimize"
 BUILD_DIR="build"
 DIST_DIR="dist"
 
+# 下载依赖
+echo "📦 下载Go依赖..."
+go mod tidy
+
 # 清理旧的构建文件
 echo "🧹 清理旧的构建文件..."
 rm -rf ${BUILD_DIR}

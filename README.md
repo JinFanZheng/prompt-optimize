@@ -62,6 +62,48 @@
 
 ### 生产部署
 
+#### 🚀 一键安装/升级（推荐）
+
+**在目标服务器上运行一行命令即可完成安装：**
+
+```bash
+# 方式1: 使用curl（推荐）
+curl -fsSL https://raw.githubusercontent.com/JinFanZheng/prompt-optimize/main/quick-install.sh | sudo bash
+
+# 方式2: 使用wget
+wget -qO- https://raw.githubusercontent.com/JinFanZheng/prompt-optimize/main/quick-install.sh | sudo bash
+```
+
+#### ⚙️ 远程部署脚本
+
+如果你可以SSH到服务器，可以使用远程部署脚本：
+
+```bash
+# 基本用法
+./remote-deploy.sh your-server.com
+
+# 指定SSH参数
+./remote-deploy.sh -u ubuntu -p 2222 your-server.com
+
+# 使用SSH密钥
+./remote-deploy.sh --key ~/.ssh/id_rsa your-server.com
+
+# 模拟运行
+./remote-deploy.sh --dry-run your-server.com
+```
+
+#### 🔄 升级现有安装
+
+```bash
+# 本地升级（在服务器上运行）
+sudo ./upgrade.sh
+
+# 远程升级（从本地运行）
+./remote-deploy.sh your-server.com
+```
+
+#### 手动构建部署
+
 #### 1. 构建应用
 
 ```bash
