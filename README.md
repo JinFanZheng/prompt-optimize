@@ -162,7 +162,19 @@ sudo systemctl status prompt-optimize
 sudo journalctl -u prompt-optimize -f
 ```
 
-#### 5. 配置 Caddy
+#### 5. 配置 Caddy（一键配置）
+
+**🚀 一键配置Caddy和域名：**
+
+```bash
+# 下载并运行Caddy配置脚本
+curl -fsSL https://raw.githubusercontent.com/JinFanZheng/prompt-optimize/main/setup-caddy.sh | sudo bash -s prompt.example.com
+
+# 或者交互式配置
+curl -fsSL https://raw.githubusercontent.com/JinFanZheng/prompt-optimize/main/setup-caddy.sh | sudo bash
+```
+
+**手动配置（如果需要）：**
 
 1. **安装 Caddy**（如果未安装）
    ```bash
@@ -174,21 +186,16 @@ sudo journalctl -u prompt-optimize -f
    sudo apt install caddy
    ```
 
-2. **配置 Caddyfile**
+2. **配置域名**
    ```bash
-   # 复制配置文件
-   sudo cp Caddyfile /etc/caddy/
-   
-   # 编辑配置，替换域名
-   sudo nano /etc/caddy/Caddyfile
+   # 编辑站点配置
+   sudo nano /etc/caddy/conf.d/prompt-optimize.conf
    # 将 your-domain.com 替换为您的实际域名
    ```
 
-3. **启动 Caddy**
+3. **重新加载配置**
    ```bash
-   sudo systemctl enable caddy
-   sudo systemctl start caddy
-   sudo systemctl status caddy
+   sudo systemctl reload caddy
    ```
 
 ## 🔧 配置选项
