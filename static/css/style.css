@@ -1,0 +1,57 @@
+/* 自定义样式 */
+.container {
+    min-height: 100vh;
+}
+
+/* 优化代码块显示 */
+#optimizedPrompt {
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    background-color: var(--fallback-b1, oklch(var(--b1)));
+    border: 1px solid var(--fallback-bc, oklch(var(--bc)));
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+/* 加载动画优化 */
+.loading-text {
+    animation: pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .text-4xl {
+        font-size: 2.5rem;
+    }
+    
+    .text-3xl {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+}
+
+/* 复制按钮动画 */
+.btn-outline:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* 提示词展示区域样式 */
+.result-content {
+    line-height: 1.6;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}

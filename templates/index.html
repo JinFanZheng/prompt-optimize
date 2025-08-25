@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-base-100">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 头部 -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">🚀 AI提示词优化工具</h1>
+            <p class="text-lg text-base-content opacity-70">
+                基于先进的元提示词技术，为您的AI提示词进行专业优化
+            </p>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 输入区域 -->
+            <div class="card bg-base-200 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <span class="text-accent">📝</span>
+                        输入您的提示词需求
+                    </h2>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">描述您想要优化的提示词或需求：</span>
+                        </label>
+                        <textarea 
+                            id="userInput" 
+                            class="textarea textarea-bordered textarea-primary h-64 resize-none" 
+                            placeholder="例如：我想要一个帮助用户写作业的AI助手提示词，需要严谨、友善，并能提供学习指导而不是直接答案..."
+                        ></textarea>
+                    </div>
+                    <div class="card-actions justify-end mt-4">
+                        <button id="optimizeBtn" class="btn btn-primary btn-lg">
+                            <span class="loading loading-spinner loading-sm hidden" id="loadingSpinner"></span>
+                            <span id="btnText">开始优化</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输出区域 -->
+            <div class="card bg-base-200 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <span class="text-success">✨</span>
+                        优化后的提示词
+                    </h2>
+                    <div class="form-control">
+                        <div id="resultContainer" class="min-h-64">
+                            <div id="placeholder" class="flex items-center justify-center h-64 text-base-content opacity-50">
+                                <div class="text-center">
+                                    <div class="text-6xl mb-4">🎯</div>
+                                    <p class="text-lg">优化后的提示词将在这里显示</p>
+                                    <p class="text-sm mt-2">输入您的需求并点击"开始优化"</p>
+                                </div>
+                            </div>
+                            <div id="result" class="hidden">
+                                <div class="bg-base-100 p-4 rounded-lg border">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="badge badge-success">优化完成</span>
+                                        <button id="copyBtn" class="btn btn-outline btn-sm">
+                                            <span id="copyText">复制</span>
+                                            <span id="copiedText" class="hidden">已复制</span>
+                                        </button>
+                                    </div>
+                                    <pre id="optimizedPrompt" class="whitespace-pre-wrap text-sm leading-relaxed"></pre>
+                                </div>
+                            </div>
+                            <div id="error" class="hidden">
+                                <div class="alert alert-error">
+                                    <span class="text-error-content" id="errorMessage"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能特色 -->
+        <div class="mt-16">
+            <h2 class="text-3xl font-bold text-center mb-8">✨ 功能特色</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🧠</div>
+                        <h3 class="card-title justify-center">智能分析</h3>
+                        <p class="text-sm opacity-70">深度理解您的需求，分析提示词的核心要素</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🔧</div>
+                        <h3 class="card-title justify-center">专业优化</h3>
+                        <p class="text-sm opacity-70">基于最新的AI提示词工程技术进行优化</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🚀</div>
+                        <h3 class="card-title justify-center">即时生成</h3>
+                        <p class="text-sm opacity-70">快速生成高质量的优化提示词</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="mt-16 mb-8">
+            <div class="card bg-base-200 shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <span class="text-info">📖</span>
+                        使用说明
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <span class="badge badge-primary">1</span>
+                            <p>在左侧输入框中描述您想要优化的提示词需求或现有提示词</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="badge badge-primary">2</span>
+                            <p>点击"开始优化"按钮，等待AI分析和优化</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="badge badge-primary">3</span>
+                            <p>在右侧查看优化后的提示词，可直接复制使用</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="badge badge-warning">💡</span>
+                            <p><strong>提示：</strong>描述越详细，优化效果越好。可以包括使用场景、目标用户、期望的回答风格等信息。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-base-content opacity-50 text-sm">
+            <p>&copy; 2024 AI提示词优化工具. 基于先进的AI技术构建.</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
