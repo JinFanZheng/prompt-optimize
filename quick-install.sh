@@ -65,16 +65,29 @@ get_latest_release() {
     # 尝试从GitHub Releases获取
     if command -v curl &> /dev/null; then
         local release_info=$(curl -s "$RELEASES_API" 2>/dev/null || echo "")
-        if [ -n "$release_info" ]; then
-            local download_url=$(echo "$release_info" | grep -o "https://github.com/${GITHUB_REPO}/releases/download/[^/]*/.*linux-${arch}.*" | head -1)
-            if [ -n "$download_url" ]; then
+        if [ -n "$release_info" ] && [ "$release_info" != "Not Found" ]; then
+            # 解析JSON获取assets中的下载链接
+            local download_url=""
+            if command -v jq &> /dev/null; then
+                # 如果有jq，使用jq解析
+                download_url=$(echo "$release_info" | jq -r ".assets[] | select(.name | contains(\"linux-${arch}\") and (contains(\".tar.gz\") | not) and (contains(\".zip\") | not)) | .browser_download_url" | head -1)
+            else
+                # 没有jq，使用grep解析
+                download_url=$(echo "$release_info" | grep -o "https://github.com/${GITHUB_REPO}/releases/download/[^\"]*prompt-optimize-linux-${arch}\"" | sed 's/"$//' | head -1)
+                if [ -z "$download_url" ]; then
+                    # 尝试匹配不同的文件名格式
+                    download_url=$(echo "$release_info" | grep -o "https://github.com/${GITHUB_REPO}/releases/download/[^\"]*linux-${arch}[^\"]*" | grep -v "\.tar\.gz" | grep -v "\.zip" | head -1)
+                fi
+            fi
+            
+            if [ -n "$download_url" ] && [ "$download_url" != "null" ]; then
                 echo "$download_url"
                 return 0
             fi
         fi
     fi
     
-    # 如果没有release，返回空（使用源码方式）
+    # 如果没有找到release，返回空（使用源码方式）
     echo ""
 }
 
