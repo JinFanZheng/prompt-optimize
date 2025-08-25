@@ -82,12 +82,8 @@ get_latest_release() {
                 # 如果有jq，使用jq解析
                 download_url=$(echo "$release_info" | jq -r ".assets[] | select(.name | contains(\"linux-${arch}\") and (contains(\".tar.gz\") | not) and (contains(\".zip\") | not)) | .browser_download_url" | head -1)
             else
-                # 没有jq，使用grep解析
-                download_url=$(echo "$release_info" | grep -o "https://github.com/${GITHUB_REPO}/releases/download/[^\"]*prompt-optimize-linux-${arch}\"" | sed 's/"$//' | head -1)
-                if [ -z "$download_url" ]; then
-                    # 尝试匹配不同的文件名格式
-                    download_url=$(echo "$release_info" | grep -o "https://github.com/${GITHUB_REPO}/releases/download/[^\"]*linux-${arch}[^\"]*" | grep -v "\.tar\.gz" | grep -v "\.zip" | head -1)
-                fi
+                # 没有jq，使用更简单的grep解析
+                download_url=$(echo "$release_info" | grep -o '"browser_download_url": *"[^"]*"' | grep "linux-${arch}" | grep -v "\.tar\.gz" | grep -v "\.zip" | head -1 | sed 's/.*"browser_download_url": *"//; s/".*//')
             fi
             
             if [ -n "$download_url" ] && [ "$download_url" != "null" ]; then
