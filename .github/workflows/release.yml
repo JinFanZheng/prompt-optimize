@@ -241,6 +241,6 @@ jobs:
           ---
           *此版本由 GitHub Actions 自动构建和发布*
         draft: false
-        prerelease: true
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
