@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style-v2.css">
+</head>
+<body class="bg-base-100">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部 -->
+        <div class="text-center mb-8">
+            <div class="flex justify-center items-center gap-4 mb-4">
+                <h1 class="text-4xl font-bold text-primary">🚀 AI提示词优化工具</h1>
+                <div class="badge badge-secondary badge-lg">V2.0</div>
+            </div>
+            <p class="text-lg text-base-content opacity-70 mb-4">
+                基于先进的元提示词技术，支持多模型优化的专业提示词工程工具
+            </p>
+            <div class="flex justify-center gap-2">
+                <a href="/" class="btn btn-outline btn-sm">返回 V1</a>
+                <div class="badge badge-info">结构化输出</div>
+                <div class="badge badge-success">多模型支持</div>
+                <div class="badge badge-warning">批量生成</div>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <!-- 左侧：输入配置区域 -->
+            <div class="xl:col-span-1 space-y-6">
+                <!-- 输入区域 -->
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title text-xl mb-4">
+                            <span class="text-accent">📝</span>
+                            输入您的提示词需求
+                        </h2>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">描述您想要优化的提示词或需求：</span>
+                            </label>
+                            <textarea 
+                                id="userInput" 
+                                class="textarea textarea-bordered textarea-primary h-40 resize-none" 
+                                placeholder="例如：我想要一个帮助用户学习Redis的AI助手提示词，需要严谨、友善，能提供学习指导而不是直接答案..."
+                            ></textarea>
+                            <div class="flex justify-between items-center mt-2 text-xs opacity-60">
+                                <span>支持 Ctrl+Enter 快速提交</span>
+                                <span id="inputCount">0 字符</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模型选择区域 -->
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title text-xl mb-4">
+                            <span class="text-info">🤖</span>
+                            目标AI模型
+                        </h2>
+                        <div class="grid grid-cols-2 gap-3" id="modelSelection">
+                            <div class="form-control">
+                                <label class="label cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="checkbox checkbox-primary" value="claude" />
+                                        <span class="label-text">Claude 4</span>
+                                    </div>
+                                    <div class="text-xs opacity-60">Sonnet/Opus</div>
+                                </label>
+                            </div>
+                            <div class="form-control">
+                                <label class="label cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="checkbox checkbox-primary" value="gpt" />
+                                        <span class="label-text">GPT-4</span>
+                                    </div>
+                                    <div class="text-xs opacity-60">4.1/4o</div>
+                                </label>
+                            </div>
+                            <div class="form-control">
+                                <label class="label cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="checkbox checkbox-primary" value="gemini" />
+                                        <span class="label-text">Gemini</span>
+                                    </div>
+                                    <div class="text-xs opacity-60">2.5 Pro</div>
+                                </label>
+                            </div>
+                            <div class="form-control">
+                                <label class="label cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="checkbox checkbox-primary" value="deepseek" />
+                                        <span class="label-text">DeepSeek</span>
+                                    </div>
+                                    <div class="text-xs opacity-60">R1</div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button id="selectAllModels" class="btn btn-outline btn-sm mr-2">全选</button>
+                            <button id="clearAllModels" class="btn btn-outline btn-sm">清空</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 高级配置 -->
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <div class="collapse collapse-arrow">
+                            <input type="checkbox" /> 
+                            <div class="collapse-title text-xl font-medium">
+                                <span class="text-secondary">⚙️</span>
+                                高级配置
+                            </div>
+                            <div class="collapse-content space-y-4">
+                                <!-- 复杂度级别 -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">复杂度级别</span>
+                                    </label>
+                                    <select id="complexityLevel" class="select select-bordered">
+                                        <option value="simple">简单 - 基础任务</option>
+                                        <option value="medium" selected>中等 - 常规优化</option>
+                                        <option value="complex">复杂 - 高级推理</option>
+                                    </select>
+                                </div>
+
+                                <!-- 任务类型 -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">任务类型</span>
+                                    </label>
+                                    <select id="taskType" class="select select-bordered">
+                                        <option value="general" selected>通用任务</option>
+                                        <option value="creative">创意写作</option>
+                                        <option value="technical">技术分析</option>
+                                        <option value="code">代码生成</option>
+                                        <option value="analytical">数据分析</option>
+                                        <option value="conversational">对话交互</option>
+                                        <option value="multimodal">多模态处理</option>
+                                    </select>
+                                </div>
+
+                                <!-- 语言选择 -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">输出语言</span>
+                                    </label>
+                                    <select id="language" class="select select-bordered">
+                                        <option value="chinese" selected>中文</option>
+                                        <option value="english">English</option>
+                                    </select>
+                                </div>
+
+                                <!-- 批量生成选项 -->
+                                <div class="form-control">
+                                    <label class="label cursor-pointer">
+                                        <span class="label-text font-semibold">批量生成多模型版本</span>
+                                        <input type="checkbox" id="generateMulti" class="toggle toggle-primary" />
+                                    </label>
+                                    <div class="text-xs opacity-60 mt-1">
+                                        开启后将为每个选中的模型生成专门优化的版本
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <div class="flex gap-2">
+                            <button id="optimizeBtn" class="btn btn-primary flex-1">
+                                <span class="loading loading-spinner loading-sm hidden" id="loadingSpinner"></span>
+                                <span id="btnText">开始优化</span>
+                            </button>
+                            <button id="batchGenerateBtn" class="btn btn-secondary">
+                                <span id="batchBtnText">批量生成</span>
+                            </button>
+                        </div>
+                        <div class="text-xs opacity-60 mt-2 text-center">
+                            单次优化或批量生成多模型版本
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：结果展示区域 -->
+            <div class="xl:col-span-2">
+                <div class="card bg-base-200 shadow-xl h-full">
+                    <div class="card-body">
+                        <h2 class="card-title text-xl mb-4">
+                            <span class="text-success">✨</span>
+                            优化结果
+                        </h2>
+                        
+                        <!-- 占位符 -->
+                        <div id="placeholder" class="flex items-center justify-center h-96 text-base-content opacity-50">
+                            <div class="text-center">
+                                <div class="text-6xl mb-4">🎯</div>
+                                <p class="text-lg">优化后的提示词将在这里显示</p>
+                                <p class="text-sm mt-2">选择目标模型并点击"开始优化"</p>
+                            </div>
+                        </div>
+
+                        <!-- 结果标签页 -->
+                        <div id="resultTabs" class="hidden">
+                            <div class="tabs tabs-lifted mb-4" id="resultTabHeaders">
+                                <a class="tab tab-active" data-tab="main">主要结果</a>
+                            </div>
+
+                            <!-- 标签页内容 -->
+                            <div class="tab-content" id="resultTabContent">
+                                <!-- 主要结果标签页 -->
+                                <div class="tab-pane active" id="mainResult">
+                                    <div class="bg-base-100 rounded-lg border">
+                                        <div class="flex justify-between items-center p-4 border-b">
+                                            <div class="flex items-center gap-2">
+                                                <span class="badge badge-success">优化完成</span>
+                                                <span id="mainWordCount" class="text-xs opacity-60"></span>
+                                                <span id="mainComplexity" class="badge badge-outline"></span>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <button class="btn btn-outline btn-sm copy-btn" data-type="optimized">
+                                                    <span class="copy-text">复制提示词</span>
+                                                    <span class="copied-text hidden">已复制</span>
+                                                </button>
+                                                <button class="btn btn-outline btn-sm copy-btn" data-type="raw">
+                                                    <span class="copy-text">复制原文</span>
+                                                    <span class="copied-text hidden">已复制</span>
+                                                </button>
+                                                <button class="btn btn-outline btn-sm" id="exportBtn">
+                                                    导出
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="p-4">
+                                            <div id="optimizedPrompt" class="prose prose-sm max-w-none mb-6"></div>
+                                            
+                                            <!-- 使用指南 -->
+                                            <div class="collapse collapse-arrow bg-base-200">
+                                                <input type="checkbox">
+                                                <div class="collapse-title font-medium">
+                                                    📋 使用指南
+                                                </div>
+                                                <div class="collapse-content">
+                                                    <div id="usageGuide" class="prose prose-sm max-w-none"></div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 测试用例 -->
+                                            <div class="collapse collapse-arrow bg-base-200 mt-2">
+                                                <input type="checkbox">
+                                                <div class="collapse-title font-medium">
+                                                    🧪 测试用例
+                                                </div>
+                                                <div class="collapse-content">
+                                                    <div id="testCases"></div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 优化说明 -->
+                                            <div class="collapse collapse-arrow bg-base-200 mt-2">
+                                                <input type="checkbox">
+                                                <div class="collapse-title font-medium">
+                                                    💡 优化技术说明
+                                                </div>
+                                                <div class="collapse-content">
+                                                    <div id="optimizationNotes" class="prose prose-sm max-w-none"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 模型特化版本标签页 -->
+                                <div class="tab-pane" id="modelVersions">
+                                    <div class="space-y-4" id="modelVersionsContent">
+                                        <!-- 动态生成的模型版本内容 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 错误显示 -->
+                        <div id="error" class="hidden">
+                            <div class="alert alert-error">
+                                <span class="text-error-content" id="errorMessage"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能特色 -->
+        <div class="mt-16">
+            <h2 class="text-3xl font-bold text-center mb-8">✨ V2.0 新功能</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🤖</div>
+                        <h3 class="card-title justify-center text-lg">多模型支持</h3>
+                        <p class="text-sm opacity-70">支持Claude、GPT、Gemini、DeepSeek等主流AI模型</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">📊</div>
+                        <h3 class="card-title justify-center text-lg">结构化输出</h3>
+                        <p class="text-sm opacity-70">返回结构化JSON数据，包含使用指南和测试用例</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">⚡</div>
+                        <h3 class="card-title justify-center text-lg">批量生成</h3>
+                        <p class="text-sm opacity-70">一键生成多个AI模型的专用优化版本</p>
+                    </div>
+                </div>
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🎛️</div>
+                        <h3 class="card-title justify-center text-lg">高级配置</h3>
+                        <p class="text-sm opacity-70">支持复杂度、任务类型等详细配置选项</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="mt-16 mb-8">
+            <div class="card bg-base-200 shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">
+                        <span class="text-info">📖</span>
+                        V2.0 使用说明
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <span class="badge badge-primary">1</span>
+                                <p>在左侧输入您的提示词需求或现有提示词</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="badge badge-primary">2</span>
+                                <p>选择目标AI模型（可多选）</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="badge badge-primary">3</span>
+                                <p>配置复杂度级别、任务类型等选项</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <span class="badge badge-primary">4</span>
+                                <p>选择"开始优化"或"批量生成"</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="badge badge-primary">5</span>
+                                <p>在右侧查看结构化的优化结果</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="badge badge-primary">6</span>
+                                <p>使用标签页查看不同模型的专用版本</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 bg-base-100 rounded-lg">
+                        <div class="flex items-start space-x-3">
+                            <span class="badge badge-warning">💡</span>
+                            <div>
+                                <p><strong>专业提示：</strong></p>
+                                <div class="mt-2 text-sm space-y-1">
+                                    <p>• 开启"批量生成"可一次性获得所有选中模型的专用版本</p>
+                                    <p>• 不同复杂度级别适用于不同类型的任务需求</p>
+                                    <p>• 结构化输出包含使用指南、测试用例和优化说明</p>
+                                    <p>• 支持导出为多种格式，方便后续使用</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-base-content opacity-50 text-sm">
+            <p>&copy; 2024 AI提示词优化工具 V2.0. 基于先进的AI技术构建.</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app-v2.js"></script>
+</body>
+</html>
